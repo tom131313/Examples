@@ -22,6 +22,8 @@ import frc.robot.subsystems.RobotSignals;
 import frc.robot.subsystems.RobotSignals.LEDPatternSupplier;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
@@ -46,16 +48,17 @@ public class RobotContainer {
   private boolean useShuffleBoardLog    = false;
 
   // options to select desired demonstrations
-  private boolean useAchieveHueGoal           = true;
-  private boolean useGroupDisjointTest        = true;
-  private boolean useHistoryFSM               = true;
-  private boolean useIntake                   = true;
-  private boolean useMooreLikeFSM             = true;
-  private boolean useMooreLikeFSMMultiCommand = true;
-  private boolean useAutonomousSignal         = true;
-  private boolean useColorWheel               = true;
-  private boolean useMainDefault              = true;
-  private boolean useEnableDisable            = true;
+  private boolean allExamples                 = true;
+  private boolean useAchieveHueGoal           = false || allExamples;
+  private boolean useGroupDisjointTest        = false || allExamples;
+  private boolean useHistoryFSM               = false || allExamples;
+  private boolean useIntake                   = false || allExamples;
+  private boolean useMooreLikeFSM             = false || allExamples;
+  private boolean useMooreLikeFSMMultiCommand = false || allExamples;
+  private boolean useAutonomousSignal         = false || allExamples;
+  private boolean useColorWheel               = false || allExamples;
+  private boolean useMainDefault              = false || allExamples;
+  private boolean useEnableDisable            = false || allExamples;
 
   private final CommandXboxController m_operatorController;
   private CommandSchedulerLog schedulerLog;
@@ -73,6 +76,8 @@ public class RobotContainer {
    * Constructor creates most of the subsystems and operator controller bindings
    */
   public RobotContainer() {
+
+    if(!allExamples) new Alert("Not using allExamples", AlertType.kError).set(true);
  
     /* There are 10's of thousands of ways to do logging.
      * Here are 3 ways with options within the method.
@@ -292,6 +297,9 @@ public class RobotContainer {
         schedulerLog.logCommandInterrupt();
         schedulerLog.logCommandFinish();
         schedulerLog.logCommandExecute();  // Can (optionally) generate a lot of output        
+      }
+      else {
+        new Alert("No logging", AlertType.kWarning).set(true);
       }
   }
 
