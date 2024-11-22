@@ -290,6 +290,7 @@ public class RobotContainer {
   /**
    * Configure Command logging to Console/Terminal, DataLog, or ShuffleBoard
    */
+  @SuppressWarnings("resource")
   public void configureCommandLogs()
   {
       if (useConsole || useDataLog || useShuffleBoardLog) {
