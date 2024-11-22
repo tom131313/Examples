@@ -75,6 +75,7 @@ public class RobotContainer {
   /**
    * Constructor creates most of the subsystems and operator controller bindings
    */
+  @SuppressWarnings("resource")
   public RobotContainer() {
 
     if(!allExamples) new Alert("Not using allExamples", AlertType.kError).set(true);
