@@ -301,6 +301,13 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
   public void runAfterCommands() {}
 
   /**
+   * Note that the several following Command Factory methods use `this.getClass().getSimpleName()` to
+   * identify command names. This results in names containing the memory address of the objects. These
+   * names are unique for an individual run of these examples but may or may not repeat for repeated
+   * runs of this program. This may cause reused or abandoned NetworkTables keys for logs.
+   */
+
+  /**
    * Factories for commands that turn on the correct LED every iteration until interrupted by a new time period.
    * 
    * <p>Commands can't be put into the State enum because

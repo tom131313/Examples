@@ -12,6 +12,37 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+/**
+ * This class could be used this way:
+ *
+//   // options for logging
+//   private boolean useConsole            = false;
+//   private boolean useDataLog            = true;
+//   private boolean useShuffleBoardLog    = false;
+
+//     /* There are thousands of ways to do logging.
+//      * Here are 3 ways with options within the method.
+//      /
+//     configureCommandLogs(); // do early on otherwise log not ready for first commands
+
+// /**
+//    * Configure Command logging to Console/Terminal, DataLog, or ShuffleBoard
+//    /
+//   @SuppressWarnings("resource")
+//   public void configureCommandLogs()
+//   {
+//       if (useConsole || useDataLog || useShuffleBoardLog) {
+//         schedulerLog = new CommandSchedulerLog(useConsole, useDataLog, useShuffleBoardLog);
+//         schedulerLog.logCommandInitialize();
+//         schedulerLog.logCommandInterrupt();
+//         schedulerLog.logCommandFinish();
+//         schedulerLog.logCommandExecute();  // Can (optionally) generate a lot of output        
+//       }
+//       else {
+//         new Alert("No logging", AlertType.kWarning).set(true);
+//       }
+//   }
+ */
 public class CommandSchedulerLog 
 {
     private static final String m_fullClassName = MethodHandles.lookup().lookupClass().getCanonicalName();
@@ -44,6 +75,13 @@ public class CommandSchedulerLog
      * Run DataLog tool to retrieve log from roboRIO and convert the log to csv.
      * 
      * <p>Note the comment in execute logging that only the first execute is logged unless changed.
+     * 
+     * <p>Note that use of the DataLog creates SmartDashboard/ShuffleBoard entries but are not the same
+     * as use of the ShuffleBoardLog. The ShuffleBoardLog has event markers independent of the DataLog.
+     * 
+     * @param useConsole
+     * @param useDataLog
+     * @param useShuffleBoardLog
      */ 
     CommandSchedulerLog(boolean useConsole, boolean useDataLog, boolean useShuffleBoardLog)
     {

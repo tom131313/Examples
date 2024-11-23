@@ -80,7 +80,7 @@ public class RobotContainer {
 
     if(!allExamples) new Alert("Not using allExamples", AlertType.kError).set(true);
  
-    /* There are 10's of thousands of ways to do logging.
+    /* There are thousands of ways to do logging.
      * Here are 3 ways with options within the method.
      */
     configureCommandLogs(); // do early on otherwise log not ready for first commands

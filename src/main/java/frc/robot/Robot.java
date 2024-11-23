@@ -55,10 +55,16 @@
  *  Moore Like FSM structured subsystem runs continuously (except for a brief pause to show the FSM
  *  can be deactivated and reactivated) to display a KnightRider Kitt red LED Scanner. State is
  *  implemented as a single command.
+ * 
+ *  In addition to the LED output the SmartDashboard/ShuffleBoard display the actions of the FSM
+ *  last entry, steadystate, and exit methods.
  *
  * 7. LED set 7 usage MooreLikeFSMMultiCommand LEDView subsystem.
  *  Alternate version of the Moore Like FSM showing use of multiple commands to implement a state.
  *  Uses a faster speed and orange color for this Kitt imposter.
+ *
+ *  In addition to the LED output the SmartDashboard/ShuffleBoard display the actions of the FSM
+ *  last entry, steadystate, and exit methods.
  *
  * 8. Console Terminal usage GroupDisjoint subsystem.
  *  Disjoint Sequential Group Demo console output initiated by entering teleop enable mode.
@@ -66,6 +72,12 @@
  *  the subsystem requirement is disjointed from the group by using a Proxy structure or separated
  *  commands structure.
  *
+ * There are user-selectable options to run the various examples. The defualt is to run all of them.
+ * 
+ * There are user-selectable options to run various logging protocols. The default is to create the
+ * DataLog which also has its own SmartdashBoard/ShuffleBoard entries. Other options are to log to
+ * the Console and to create ShuffleBoardLog event markers.
+ * 
  * All commands are interruptible. Some button presses are debounced.
  */
 
