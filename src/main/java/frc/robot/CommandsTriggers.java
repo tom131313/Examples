@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.AchieveHueGoal;
 import frc.robot.subsystems.GroupDisjointTest;
@@ -38,27 +39,79 @@ public abstract class CommandsTriggers {
   private CommandsTriggers()
     {}
 
-    public static void create(RobotContainer robotContainer)
-    {
-      m_operatorController = robotContainer.getM_operatorController();
-      m_robotSignals = robotContainer.getM_robotSignals();
-      m_achieveHueGoal = robotContainer.getM_achieveHueGoal();
-      m_groupDisjointTest = robotContainer.getM_groupDisjointTest();
-      m_historyFSM = robotContainer.getM_historyFSM();
-      m_intake = robotContainer.getM_intake();
-      m_mooreLikeFSM = robotContainer.getM_mooreLikeFSM();
-      m_mooreLikeFSMMultiCommand = robotContainer.getM_mooreLikeFSMMultiCommand();
-      m_UseColorWheel = robotContainer.getM_useColorWheel();
-      m_UseMainDefault = robotContainer.getM_useMainDefault();
-      m_UseEnableDisable = robotContainer.getM_useEnableDisable();
-
-    configureGameControllersBindings();
-
-    configureDefaultCommands();
+  public static void create(RobotContainer robotContainer)
+  {
+    m_operatorController = robotContainer.getM_operatorController();
+    m_robotSignals = robotContainer.getM_robotSignals();
+    m_achieveHueGoal = robotContainer.getM_achieveHueGoal();
+    m_groupDisjointTest = robotContainer.getM_groupDisjointTest();
+    m_historyFSM = robotContainer.getM_historyFSM();
+    m_intake = robotContainer.getM_intake();
+    m_mooreLikeFSM = robotContainer.getM_mooreLikeFSM();
+    m_mooreLikeFSMMultiCommand = robotContainer.getM_mooreLikeFSMMultiCommand();
+    m_UseColorWheel = robotContainer.getM_useColorWheel();
+    m_UseMainDefault = robotContainer.getM_useMainDefault();
+    m_UseEnableDisable = robotContainer.getM_useEnableDisable();
 
     configureSuppliers();
+    configureCommandsAndTriggers();
+    configureGameControllersBindings();
+    configureDefaultCommands();
+  }
 
-    }
+  //  SUPPLIERS
+  private static RobotSignals.LEDPatternSupplier colorWheel;
+  private static void configureSuppliers() {
+
+  colorWheel = // produce a LED color pattern based on the timer current seconds of the minute
+    () ->
+        LEDPattern.solid(
+            Color.fromHSV(
+                (int) (Timer.getFPGATimestamp() % 60.0 /* seconds of the minute */)
+                    * 3 /* scale seconds to 180 hues per color wheel */,
+                200,
+                200));
+  }
+
+  public static Command setAutonomousSignal;
+  private static void configureCommandsAndTriggers() {
+
+
+  
+  /**
+   * Create a command to signal Autonomous mode
+   *
+   * <p>Example of setting two signals by contrived example of composed commands
+   *
+   * @return LED pattern signal for autonomous mode
+   */
+  
+    m_UseAutonomousSignal.ifPresentOrElse((x)-> {
+    
+      LEDPattern autoTopSignal =
+            LEDPattern.solid(new Color(0.1, 0.2, 0.2))
+            .blend(LEDPattern.solid(new Color(0.7, 0.2, 0.2)).blink(Seconds.of(0.1)));
+            
+      LEDPattern autoMainSignal = LEDPattern.solid(new Color(0.3, 1.0, 0.3));
+      // statements before the return are run early at initialization time
+      setAutonomousSignal =
+        // statements returned are run later when the command is scheduled
+        Commands.parallel(
+                // interrupting either of the two parallel commands with an external command interrupts
+                // the group
+                m_robotSignals.m_top.setSignal(autoTopSignal)
+                    .withTimeout(6.0)/*.asProxy()*/ // timeout ends but the group continues and
+                // the default command is not activated here with or without the ".andThen" command.
+                // Use ".asProxy()" to disjoint the group and allow the "m_top" default command to run.
+                // What happened to the ".andThen"? Beware using Proxy can cause surprising behavior!
+                    .andThen(m_robotSignals.m_top.setSignal(autoTopSignal)),
+
+                m_robotSignals.m_main.setSignal(autoMainSignal))
+        .withName("AutoSignal");
+    },
+    (x)-> setAutonomousSignal = Commands.print("Autonomous Signal not selected")
+    );
+  }
 
   /**
    * configure driver and operator controllers' buttons
@@ -112,21 +165,6 @@ public abstract class CommandsTriggers {
       m_operatorController.a()
           .onTrue(x.interrupt());
     });
-  }
-
-
-  //  SUPPLIERS
-  private static RobotSignals.LEDPatternSupplier colorWheel;
-  private static void configureSuppliers() {
-
-  colorWheel = // produce a LED color pattern based on the timer current seconds of the minute
-    () ->
-        LEDPattern.solid(
-            Color.fromHSV(
-                (int) (Timer.getFPGATimestamp() % 60.0 /* seconds of the minute */)
-                    * 3 /* scale seconds to 180 hues per color wheel */,
-                200,
-                200));
   }
 
 /**

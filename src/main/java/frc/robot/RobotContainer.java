@@ -130,39 +130,6 @@ public class RobotContainer {
     configureCommandLogs(); // do early on otherwise log not ready for first commands
   }
 
-  /**
-   * Create a command to signal Autonomous mode
-   *
-   * <p>Example of setting two signals by contrived example of composed commands
-   *
-   * @return LED pattern signal for autonomous mode
-   */
-  public Command setAutonomousSignal() {
-    if(useAutonomousSignal)
-    {
-      LEDPattern autoTopSignal =
-            LEDPattern.solid(new Color(0.1, 0.2, 0.2))
-            .blend(LEDPattern.solid(new Color(0.7, 0.2, 0.2)).blink(Seconds.of(0.1)));
-            
-      LEDPattern autoMainSignal = LEDPattern.solid(new Color(0.3, 1.0, 0.3));
-      // statements before the return are run early at initialization time
-      return
-        // statements returned are run later when the command is scheduled
-        parallel(
-                // interrupting either of the two parallel commands with an external command interrupts
-                // the group
-                m_robotSignals.m_top.setSignal(autoTopSignal)
-                    .withTimeout(6.0)/*.asProxy()*/ // timeout ends but the group continues and
-                // the default command is not activated here with or without the ".andThen" command.
-                // Use ".asProxy()" to disjoint the group and allow the "m_top" default command to run.
-                // What happened to the ".andThen"? Beware using Proxy can cause surprising behavior!
-                    .andThen(m_robotSignals.m_top.setSignal(autoTopSignal)),
-
-                m_robotSignals.m_main.setSignal(autoMainSignal))
-        .withName("AutoSignal");      
-    }
-    return print("Autonomous Signal not selected");
-  }
 
   /**
    * Get disjointed sequence test from its creator for use by Robot - passing the reference up
