@@ -7,7 +7,6 @@ package frc.robot;
  * be made.
  */
 
-import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static edu.wpi.first.wpilibj2.command.Commands.print;
@@ -19,14 +18,10 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.MooreLikeFSM;
 import frc.robot.subsystems.MooreLikeFSMMultiCommand;
 import frc.robot.subsystems.RobotSignals;
-import frc.robot.subsystems.RobotSignals.LEDPatternSupplier;
 
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -35,17 +30,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.Optional;
 
 public class RobotContainer {
-  private static final String fullClassName = MethodHandles.lookup().lookupClass().getCanonicalName();
-  static
-  {
-    System.out.println("Loading: " + fullClassName);
-    System.out.println("WPILib version " + edu.wpi.first.wpilibj.util.WPILibVersion.Version);
-  }
-
-  // options for logging
-  private boolean useConsole            = false;
-  private boolean useDataLog            = true;
-  private boolean useShuffleBoardLog    = false;
 
   // options to select desired demonstrations
   private boolean allExamples                 = true;
@@ -60,18 +44,78 @@ public class RobotContainer {
   private boolean useMainDefault              = false || allExamples;
   private boolean useEnableDisable            = false || allExamples;
 
-  private final CommandXboxController m_operatorController;
-  private CommandSchedulerLog schedulerLog;
+  // options for logging
+  private boolean useConsole            = false;
+  private boolean useDataLog            = true;
+  private boolean useShuffleBoardLog    = false;
 
-  // define all the subsystems
-  private final RobotSignals m_robotSignals; // container and creator of all the LEDView subsystems
-  private Optional<Intake>                   m_intake             = Optional.empty();
-  private Optional<HistoryFSM>               m_historyFSM         = Optional.empty();
-  private Optional<AchieveHueGoal>           m_achieveHueGoal     = Optional.empty();
-  private Optional<MooreLikeFSM>             m_mooreLikeFSMtop    = Optional.empty();
-  private Optional<MooreLikeFSMMultiCommand> m_mooreLikeFSMbottom = Optional.empty();
-  private Optional<GroupDisjointTest>        m_groupDisjointTest  = Optional.empty(); // container and creator of all
-                                                                                      // the group/disjoint tests
+  // required classes and subsystems
+
+  final int operatorControllerPort = 0; // user configuarable port
+  private final CommandXboxController m_operatorController = new CommandXboxController(operatorControllerPort);
+  public CommandXboxController getM_operatorController() {
+    return m_operatorController;
+  }
+
+  private final RobotSignals m_robotSignals = new RobotSignals(); // container and creator of all the LEDView subsystems
+  public RobotSignals getM_robotSignals() {
+    return m_robotSignals;
+  }
+  
+  // optional classes and subsystems
+
+  private Optional<AchieveHueGoal> m_achieveHueGoal = useAchieveHueGoal ? Optional.of(new AchieveHueGoal(m_robotSignals.m_achieveHueGoal)) : Optional.empty();
+  public Optional<AchieveHueGoal> getM_achieveHueGoal() {
+    return m_achieveHueGoal;
+  }
+
+  private Optional<GroupDisjointTest> m_groupDisjointTest = useGroupDisjointTest ? Optional.of(new GroupDisjointTest()) : Optional.empty(); // container and creator of all
+  public Optional<GroupDisjointTest> getM_groupDisjointTest() {
+    return m_groupDisjointTest;
+  }
+
+  private Optional<HistoryFSM> m_historyFSM = useHistoryFSM ? Optional.of(new HistoryFSM(m_robotSignals.m_historyDemo)) : Optional.empty();
+  public Optional<HistoryFSM> getM_historyFSM() {
+    return m_historyFSM;
+  }
+
+  private Optional<Intake> m_intake = useIntake ? Optional.of(new Intake(m_robotSignals.m_main)) : Optional.empty();
+  public Optional<Intake> getM_intake() {
+    return m_intake;
+  }
+
+  private Optional<MooreLikeFSM> m_mooreLikeFSM = useMooreLikeFSM ? Optional.of(new MooreLikeFSM(m_robotSignals.m_knightRider, 10.0, Color.kRed)) : Optional.empty();
+  public Optional<MooreLikeFSM> getM_mooreLikeFSM() {
+    return m_mooreLikeFSM;
+  }
+
+  private Optional<MooreLikeFSMMultiCommand> m_mooreLikeFSMMultiCommand = useMooreLikeFSMMultiCommand ? Optional.of(new MooreLikeFSMMultiCommand(m_robotSignals.m_imposter, 9.9, Color.kOrange)) : Optional.empty();
+  public Optional<MooreLikeFSMMultiCommand> getM_mooreLikeFSMMultiCommand() {
+    return m_mooreLikeFSMMultiCommand;
+  }
+
+  private Optional<Boolean> m_colorWheel = useColorWheel ? Optional.of(true): Optional.empty();
+  public Optional<Boolean> getM_useColorWheel() {
+    return m_colorWheel;
+  }
+
+  private Optional<Boolean> m_mainDefault = useMainDefault ? Optional.of(true) : Optional.empty();
+  public Optional<Boolean> getM_useMainDefault() {
+    return m_mainDefault;
+  }
+
+  private Optional<Boolean> m_enableDisable = useEnableDisable ? Optional.of(true) : Optional.empty();
+  public Optional<Boolean> getM_useEnableDisable() {
+    return m_enableDisable;
+  }
+
+  private static final String fullClassName = MethodHandles.lookup().lookupClass().getCanonicalName();
+  static
+  {
+    System.out.println("Loading: " + fullClassName);
+    System.out.println("WPILib version " + edu.wpi.first.wpilibj.util.WPILibVersion.Version);
+  }
+
   /**
    * Constructor creates most of the subsystems and operator controller bindings
    */
@@ -84,160 +128,6 @@ public class RobotContainer {
      * Here are 3 ways with options within the method.
      */
     configureCommandLogs(); // do early on otherwise log not ready for first commands
-
-    final int operatorControllerPort = 0;
-    m_operatorController = new CommandXboxController(operatorControllerPort);
-    // subsystems
-    m_robotSignals = new RobotSignals();
-
-    // optional subsystems
-    if(useIntake)                   m_intake             = Optional.of(new Intake(m_robotSignals.m_main));
-    if(useHistoryFSM)               m_historyFSM         = Optional.of(new HistoryFSM(m_robotSignals.m_historyDemo));
-    if(useAchieveHueGoal)           m_achieveHueGoal     = Optional.of(new AchieveHueGoal(m_robotSignals.m_achieveHueGoal));
-    if(useMooreLikeFSM)             m_mooreLikeFSMtop    = Optional.of(new MooreLikeFSM(m_robotSignals.m_knightRider, 10.0, Color.kRed));
-    if(useMooreLikeFSMMultiCommand) m_mooreLikeFSMbottom = Optional.of(new MooreLikeFSMMultiCommand(m_robotSignals.m_imposter, 9.9, Color.kOrange));
-    if(useGroupDisjointTest)        m_groupDisjointTest  = Optional.of(new GroupDisjointTest());
-
-    configureBindings();
-
-    configureDefaultCommands();
-  }
-
-  /**
-   * configure driver and operator controllers' buttons
-   */
-  private void configureBindings() {
-
-    /**
-     * Use operator "B" button for a fake indicator game piece is acquired
-     */
-    m_intake.ifPresent((x)->m_operatorController.b().whileTrue(x.gamePieceIsAcquired()));
-
-    /**
-     * Start History FSM Control with the operator "Y" button or it's time for a new color
-     */
-    m_historyFSM.ifPresent((x)->
-    {
-      var yButtonDebounceTime = Milliseconds.of(40.0);
-      m_operatorController.y().debounce(yButtonDebounceTime.in(Seconds)).or(x::timesUp)
-        .onTrue(x.newColor());
-    });
-    
-
-    /**
-     * Start a color wheel display with the operator "X" button
-     */
-    if(useColorWheel)
-    {
-      var xButtonDebounceTime = Milliseconds.of(30.0);
-      m_operatorController
-          .x()
-          .debounce(xButtonDebounceTime.in(Seconds), DebounceType.kBoth)
-          .onTrue(m_robotSignals.m_top.setSignal(colorWheel()));
-    }
-
-    /**
-      * Goal setting demo control
-      *
-      * The PID controller is not running initially until a setpoint is set by moving the operator
-      * right trigger axis past the threshold at which time a command runs to achieve that goal.
-      */
-    m_achieveHueGoal.ifPresent((x)->
-    {
-      var triggerHueGoalDeadBand = 0.05; //triggers if past a small threshold (scale of 0 to 1)
-      m_operatorController.rightTrigger(triggerHueGoalDeadBand)
-          .onTrue(
-              x.achieveHue( // goal-acceptance command
-                  () -> m_operatorController.getRightTriggerAxis()*180.0 // supplying the setpoint
-                  // scale joystick's 0 to 1 to computer color wheel hue 0 to 180
-                  ));
-
-      // immediately stop controller
-      m_operatorController.a()
-          .onTrue(x.interrupt());
-    });
-  }
-
-  /**
-   * "color wheel" supplier runs when commanded
-   *
-   * @return LED pattern for the color selected by the operator controller
-   */
-  private RobotSignals.LEDPatternSupplier colorWheel() {
-    // produce a color based on the timer current seconds of the minute
-    return () ->
-        LEDPattern.solid(
-            Color.fromHSV(
-                (int) (Timer.getFPGATimestamp() % 60.0 /* seconds of the minute */)
-                    * 3 /* scale seconds to 180 hues per color wheel */,
-                200,
-                200));
-  }
-
-  /**
-   * Configure some of the Default Commands
-   *
-   * <p>WARNING - heed the advice in the Robot.java comments about default commands
-   */
-  private void configureDefaultCommands() {
-    final LEDPattern topDefaultSignal = LEDPattern.solid(new Color(0.0, 0.0, 1.0));
-    final LEDPattern mainDefaultSignal = LEDPattern.solid(new Color(0.0, 1.0, 1.0));
-    final LEDPattern disabled = LEDPattern.solid(Color.kRed).breathe(Seconds.of(2.0));
-    final LEDPattern enabled = LEDPattern.solid(Color.kGreen).breathe(Seconds.of(2.0));
-    final LEDPatternSupplier enableDisableDefaultSignal =
-        () -> DriverStation.isDisabled() ? disabled : enabled;
-    // Intended that hue controller display always be ON so make it noticeable that it's OFF
-    // since this default command should never run
-    final LEDPattern hueControllerDisplayOffSignal = LEDPattern.solid(Color.kWhiteSmoke)
-        .blink(Seconds.of(0.09));
-
-    if(useColorWheel)
-    {
-      final Command topDefault =
-          m_robotSignals
-              .m_top
-              .setSignal(topDefaultSignal)
-              .ignoringDisable(true)
-              .withName("TopDefault");
-      m_robotSignals.m_top.setDefaultCommand(topDefault);
-    }
-
-    if(useMainDefault)
-    {
-      final Command mainDefault =
-          m_robotSignals
-              .m_main
-              .setSignal(mainDefaultSignal)
-              .ignoringDisable(true)
-              .withName("MainDefault");
-      m_robotSignals.m_main.setDefaultCommand(mainDefault);
-    }
-
-    if(useEnableDisable)
-    {
-      final Command enableDisableDefault =
-          m_robotSignals
-              .m_enableDisable
-              .setSignal(enableDisableDefaultSignal)
-              .ignoringDisable(true)
-              .withName("EnableDisableDefault");
-      m_robotSignals.m_enableDisable.setDefaultCommand(enableDisableDefault);
-    }
-
-    m_achieveHueGoal.ifPresent((x)->
-    {
-      final Command hueControllerDisplayDefault =
-          m_robotSignals
-              .m_achieveHueGoal
-              .setSignal(hueControllerDisplayOffSignal)
-              .ignoringDisable(true)
-              .withName("HueControllerDisplayOff");
-      m_robotSignals.m_achieveHueGoal.setDefaultCommand(hueControllerDisplayDefault);
-      x.achieveHueDisplay().schedule(); // Not strictly the default but it should
-      // always be running and we never see the default. Using the default command for the perpetual
-      // command may be more robust as it restarts if cancelled for any reason but that wasn't used
-      // in this example. cancelAll() will kill this so don't! (It wouldn't kill a default command.)
-    });
   }
 
   /**
@@ -284,8 +174,13 @@ public class RobotContainer {
     {
       return m_groupDisjointTest.get().m_disjointedSequenceTest;
     }
-    return print("Group Disjointed Test not selected");
+    else
+    {
+      return print("Group Disjointed Test not selected");
+    }
   }
+
+  private CommandSchedulerLog schedulerLog;
 
   /**
    * Configure Command logging to Console/Terminal, DataLog, or ShuffleBoard
@@ -334,13 +229,13 @@ public class RobotContainer {
    *
    */
   public void runBeforeCommands() {
-    m_intake            .ifPresent((x)->x.runBeforeCommands());
-    m_historyFSM        .ifPresent((x)->x.runBeforeCommands());
-    m_achieveHueGoal    .ifPresent((x)->x.runBeforeCommands());
-    m_mooreLikeFSMtop   .ifPresent((x)->x.runBeforeCommands());
-    m_mooreLikeFSMbottom.ifPresent((x)->x.runBeforeCommands());
-    m_groupDisjointTest .ifPresent((x)->x.runBeforeCommands());
-    m_robotSignals                       .runBeforeCommands();
+    m_intake                  .ifPresent((x)->x.runBeforeCommands());
+    m_historyFSM              .ifPresent((x)->x.runBeforeCommands());
+    m_achieveHueGoal          .ifPresent((x)->x.runBeforeCommands());
+    m_mooreLikeFSM            .ifPresent((x)->x.runBeforeCommands());
+    m_mooreLikeFSMMultiCommand.ifPresent((x)->x.runBeforeCommands());
+    m_groupDisjointTest       .ifPresent((x)->x.runBeforeCommands());
+    m_robotSignals                                  .runBeforeCommands();
   }
 
   /**
@@ -350,12 +245,12 @@ public class RobotContainer {
    * classes that have periodic outputs
    */
   public void runAfterCommands() {
-    m_intake            .ifPresent((x)->x.runAfterCommands());
-    m_historyFSM        .ifPresent((x)->x.runAfterCommands());
-    m_achieveHueGoal    .ifPresent((x)->x.runAfterCommands());
-    m_mooreLikeFSMtop   .ifPresent((x)->x.runAfterCommands());
-    m_mooreLikeFSMbottom.ifPresent((x)->x.runAfterCommands());
-    m_groupDisjointTest .ifPresent((x)->x.runAfterCommands());
-    m_robotSignals                       .runAfterCommands();
+    m_intake                   .ifPresent((x)->x.runAfterCommands());
+    m_historyFSM               .ifPresent((x)->x.runAfterCommands());
+    m_achieveHueGoal           .ifPresent((x)->x.runAfterCommands());
+    m_mooreLikeFSM             .ifPresent((x)->x.runAfterCommands());
+    m_mooreLikeFSMMultiCommand.ifPresent((x)->x.runAfterCommands());
+    m_groupDisjointTest       .ifPresent((x)->x.runAfterCommands());
+    m_robotSignals                                  .runAfterCommands();
   }
 }

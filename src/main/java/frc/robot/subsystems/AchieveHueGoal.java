@@ -218,7 +218,8 @@ public class AchieveHueGoal extends SubsystemBase {
   }
 }
 
-/** The above example code of a PID controller usage follows #1 of @Oblarg post on Chief Delphi:
+/** The above example code of a PID controller usage follows #1 of @Oblarg post on Chief Delphi
+ * https://www.chiefdelphi.com/t/command-based-help/446143/19
  * <pre><code>
  * // Example of two ways to create a PID controller Command as factory in a subsystem
  * // (Don't use the WPILib PIDControllerCommand; create your own with a factory)
