@@ -61,7 +61,8 @@
  *
  * 7. LED set 7 usage MooreLikeFSMMultiCommand LEDView subsystem.
  *  Alternate version of the Moore Like FSM showing use of multiple commands to implement a state.
- *  Uses a faster speed and orange color for this Kitt imposter.
+ *  Uses a faster speed and orange color for this Kitt imposter and has the same deactivated pause
+ *  and reactivation as the other Moore Like FSM.
  *
  *  In addition to the LED output the SmartDashboard/ShuffleBoard display the actions of the FSM
  *  last entry, steadystate, and exit methods.
@@ -109,6 +110,7 @@
  * Use of sequential and parallel composed command groups to perform tasks.
  * Use of a reusable Moore-Like FSM structure of current state, trigger, new state transitions.
  * Use of a perpetually running command to accept "goals".
+ * Use of Alerts.
  */
 
 /*
@@ -207,6 +209,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // get a consistent set of all inputs including non-subsystems not in scheduler run
     m_robotContainer.runBeforeCommands(); // this is essentially similar to running the scheduler
+                                          // Subsystem.periodic()
 
     // check all triggers and run all scheduled commands; all Subsystem.periodic() are run first
     CommandScheduler.getInstance().run();
@@ -253,7 +256,7 @@ public class Robot extends TimedRobot {
       m_autonomousSignal.cancel();
     }
 
-    if (m_robotContainer.getM_groupDisjointTest().isPresent()) {
+    if (m_robotContainer.getM_groupDisjointTest().isPresent()) { // usually nicer than checking null
       CommandsTriggers.getDisjointedSequenceTest().schedule();
     }
   }

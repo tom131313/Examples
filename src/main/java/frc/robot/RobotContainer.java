@@ -1,10 +1,9 @@
 package frc.robot;
 
 /**
- * Create subsystems, triggers, and commands; bind buttons to commands and triggers; define command
- * logging; manage the details of what is periodically processed before and after the command
- * scheduler loop; - everything until it got too big and some logical splits to other classes had to
- * be made.
+ * Create subsystems, define command logging, manage the details of what is
+ * periodically processed before and after the command scheduler loop - everything
+ * until it got too big and some logical splits to other classes had to be made.
  */
 
 import frc.robot.subsystems.AchieveHueGoal;
@@ -25,7 +24,7 @@ import java.util.Optional;
 
 public class RobotContainer {
 
-  // options to select desired demonstrations
+  //FIXME options to select desired demonstrations
   private boolean allExamples                 = true;
   private boolean useAchieveHueGoal           = false || allExamples;
   private boolean useGroupDisjointTest        = false || allExamples;
@@ -38,7 +37,7 @@ public class RobotContainer {
   private boolean useMainDefault              = false || allExamples;
   private boolean useEnableDisable            = false || allExamples;
 
-  // options for logging
+  //FIXME options for logging
   private boolean useConsole            = false;
   private boolean useDataLog            = true;
   private boolean useShuffleBoardLog    = false;

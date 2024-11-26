@@ -55,12 +55,13 @@ public abstract class CommandsTriggers {
     configureDefaultCommands();
   }
 
-  //  SUPPLIERS
   private static RobotSignals.LEDPatternSupplier colorWheel;
+  /**
+   * Configure SUppliers
+   */
   private static void configureSuppliers() {
-
-  colorWheel = // produce a LED color pattern based on the timer current seconds of the minute
-    () ->
+    colorWheel = // produce a LED color pattern based on the timer current seconds of the minute
+      () ->
         LEDPattern.solid(
             Color.fromHSV(
                 (int) (Timer.getFPGATimestamp() % 60.0 /* seconds of the minute */)
@@ -69,7 +70,7 @@ public abstract class CommandsTriggers {
                 200));
   }
 
-    /**
+  /**
    * Get disjointed sequence test from its creator for use by Robot - passing the reference up
    * 
    * @return Command to be scheduled to run disjointed sequence test
@@ -94,7 +95,6 @@ public abstract class CommandsTriggers {
    */
   public static Command setAutonomousSignal() {
     if(m_UseAutonomousSignal.isPresent()) {
-    
       LEDPattern autoTopSignal =
             LEDPattern.solid(new Color(0.1, 0.2, 0.2))
             .blend(LEDPattern.solid(new Color(0.7, 0.2, 0.2)).blink(Seconds.of(0.1)));
@@ -174,7 +174,7 @@ public abstract class CommandsTriggers {
     });
   }
 
-/**
+  /**
    * Configure some of the Default Commands
    *
    * <p>WARNING - heed the advice in the Robot.java comments about default commands
@@ -239,9 +239,4 @@ public abstract class CommandsTriggers {
       // in this example. cancelAll() will kill this so don't! (It wouldn't kill a default command.)
     });
   }
-
-
-
-
-
 }

@@ -72,8 +72,8 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class GroupDisjointTest extends SubsystemBase {
-  // runtime option; too rigid - could be made easier to find and change but this is just a
-  // "simple" example program
+  //FIXME runtime option; too rigid - could be made easier to find and change
+  // but this is just a "simple" example program
 
   // runtime option to run tests as Triggered job (true) or run as Commands.sequence (false)
   private final boolean m_useTriggeredJob = false;
