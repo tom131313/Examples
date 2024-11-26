@@ -7,10 +7,6 @@ package frc.robot;
  * be made.
  */
 
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.wpilibj2.command.Commands.parallel;
-import static edu.wpi.first.wpilibj2.command.Commands.print;
-
 import frc.robot.subsystems.AchieveHueGoal;
 import frc.robot.subsystems.GroupDisjointTest;
 import frc.robot.subsystems.HistoryFSM;
@@ -21,9 +17,7 @@ import frc.robot.subsystems.RobotSignals;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import java.lang.invoke.MethodHandles;
@@ -94,6 +88,11 @@ public class RobotContainer {
     return m_mooreLikeFSMMultiCommand;
   }
 
+  private Optional<Boolean> m_autonomousSignal = useAutonomousSignal ? Optional.of(true) : Optional.empty();
+  public Optional<Boolean> getM_autonomousSignal() {
+    return m_autonomousSignal;
+  }
+
   private Optional<Boolean> m_colorWheel = useColorWheel ? Optional.of(true): Optional.empty();
   public Optional<Boolean> getM_useColorWheel() {
     return m_colorWheel;
@@ -128,23 +127,6 @@ public class RobotContainer {
      * Here are 3 ways with options within the method.
      */
     configureCommandLogs(); // do early on otherwise log not ready for first commands
-  }
-
-
-  /**
-   * Get disjointed sequence test from its creator for use by Robot - passing the reference up
-   * 
-   * @return Command to be scheduled to run disjointed sequence test
-   */
-  public Command getDisjointedSequenceTest() {
-    if(m_groupDisjointTest.isPresent())
-    {
-      return m_groupDisjointTest.get().m_disjointedSequenceTest;
-    }
-    else
-    {
-      return print("Group Disjointed Test not selected");
-    }
   }
 
   private CommandSchedulerLog schedulerLog;

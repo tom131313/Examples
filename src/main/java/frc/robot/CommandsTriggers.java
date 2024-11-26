@@ -1,8 +1,9 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+import static edu.wpi.first.wpilibj2.command.Commands.print;
 import static edu.wpi.first.units.Units.Seconds;
-import java.util.Optional;
+import static edu.wpi.first.units.Units.Milliseconds;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -10,16 +11,15 @@ import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.AchieveHueGoal;
 import frc.robot.subsystems.GroupDisjointTest;
 import frc.robot.subsystems.HistoryFSM;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.MooreLikeFSM;
-import frc.robot.subsystems.MooreLikeFSMMultiCommand;
 import frc.robot.subsystems.RobotSignals;
 import frc.robot.subsystems.RobotSignals.LEDPatternSupplier;
+
+import java.util.Optional;
 
 public abstract class CommandsTriggers {
   private static CommandXboxController              m_operatorController;
@@ -28,8 +28,6 @@ public abstract class CommandsTriggers {
   private static Optional<GroupDisjointTest>        m_groupDisjointTest;
   private static Optional<HistoryFSM>               m_historyFSM;
   private static Optional<Intake>                   m_intake;
-  private static Optional<MooreLikeFSM>             m_mooreLikeFSM;
-  private static Optional<MooreLikeFSMMultiCommand> m_mooreLikeFSMMultiCommand;
   private static Optional<Boolean>                  m_UseAutonomousSignal;
   private static Optional<Boolean>                  m_UseColorWheel;
   private static Optional<Boolean>                  m_UseMainDefault;
@@ -47,14 +45,12 @@ public abstract class CommandsTriggers {
     m_groupDisjointTest = robotContainer.getM_groupDisjointTest();
     m_historyFSM = robotContainer.getM_historyFSM();
     m_intake = robotContainer.getM_intake();
-    m_mooreLikeFSM = robotContainer.getM_mooreLikeFSM();
-    m_mooreLikeFSMMultiCommand = robotContainer.getM_mooreLikeFSMMultiCommand();
+    m_UseAutonomousSignal = robotContainer.getM_autonomousSignal();
     m_UseColorWheel = robotContainer.getM_useColorWheel();
     m_UseMainDefault = robotContainer.getM_useMainDefault();
     m_UseEnableDisable = robotContainer.getM_useEnableDisable();
 
     configureSuppliers();
-    configureCommandsAndTriggers();
     configureGameControllersBindings();
     configureDefaultCommands();
   }
@@ -73,11 +69,22 @@ public abstract class CommandsTriggers {
                 200));
   }
 
-  public static Command setAutonomousSignal;
-  private static void configureCommandsAndTriggers() {
+    /**
+   * Get disjointed sequence test from its creator for use by Robot - passing the reference up
+   * 
+   * @return Command to be scheduled to run disjointed sequence test
+   */
+  public static Command getDisjointedSequenceTest() {
+    if(m_groupDisjointTest.isPresent())
+    {
+      return m_groupDisjointTest.get().m_disjointedSequenceTest;
+    }
+    else
+    {
+      return print("Group Disjointed Test not selected");
+    }
+  }
 
-
-  
   /**
    * Create a command to signal Autonomous mode
    *
@@ -85,8 +92,8 @@ public abstract class CommandsTriggers {
    *
    * @return LED pattern signal for autonomous mode
    */
-  
-    m_UseAutonomousSignal.ifPresentOrElse((x)-> {
+  public static Command setAutonomousSignal() {
+    if(m_UseAutonomousSignal.isPresent()) {
     
       LEDPattern autoTopSignal =
             LEDPattern.solid(new Color(0.1, 0.2, 0.2))
@@ -94,9 +101,8 @@ public abstract class CommandsTriggers {
             
       LEDPattern autoMainSignal = LEDPattern.solid(new Color(0.3, 1.0, 0.3));
       // statements before the return are run early at initialization time
-      setAutonomousSignal =
-        // statements returned are run later when the command is scheduled
-        Commands.parallel(
+      return
+        parallel(
                 // interrupting either of the two parallel commands with an external command interrupts
                 // the group
                 m_robotSignals.m_top.setSignal(autoTopSignal)
@@ -105,12 +111,13 @@ public abstract class CommandsTriggers {
                 // Use ".asProxy()" to disjoint the group and allow the "m_top" default command to run.
                 // What happened to the ".andThen"? Beware using Proxy can cause surprising behavior!
                     .andThen(m_robotSignals.m_top.setSignal(autoTopSignal)),
-
                 m_robotSignals.m_main.setSignal(autoMainSignal))
-        .withName("AutoSignal");
-    },
-    (x)-> setAutonomousSignal = Commands.print("Autonomous Signal not selected")
-    );
+          .withName("AutoSignal");
+    }
+    else {
+      return
+        print("Autonomous Signal not selected");
+    }
   }
 
   /**

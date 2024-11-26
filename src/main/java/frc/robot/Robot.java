@@ -198,7 +198,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer = new RobotContainer();
   private Command m_autonomousSignal;
-  private Command m_disjointedSequenceTests;
 
   public Robot() {
     CommandsTriggers.create(m_robotContainer);
@@ -229,9 +228,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // Commands running from another mode haven't been cancelled directly but may be interrupted by
     // this command.
-    m_autonomousSignal = m_robotContainer.setAutonomousSignal();
+    m_autonomousSignal = CommandsTriggers.setAutonomousSignal();
 
-    if (m_autonomousSignal != null) {
+    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
       m_autonomousSignal.schedule();
     }
   }
@@ -241,7 +240,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    if (m_autonomousSignal != null) {
+    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
       m_autonomousSignal.cancel();
     }
   }
@@ -250,14 +249,12 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     // Commands running from another mode haven't been cancelled directly except the one below.
 
-    if (m_autonomousSignal != null) {
+    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
       m_autonomousSignal.cancel();
     }
 
-    m_disjointedSequenceTests = m_robotContainer.getDisjointedSequenceTest();
-
-    if (m_disjointedSequenceTests != null) {
-      m_disjointedSequenceTests.schedule();
+    if (m_robotContainer.getM_groupDisjointTest().isPresent()) {
+      CommandsTriggers.getDisjointedSequenceTest().schedule();
     }
   }
 
