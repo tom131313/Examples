@@ -35,7 +35,7 @@ public abstract class CommandsTriggers {
 
   
   private CommandsTriggers()
-    {}
+  {}
 
   public static void create(RobotContainer robotContainer)
   {
@@ -50,17 +50,16 @@ public abstract class CommandsTriggers {
     m_UseMainDefault = robotContainer.getM_useMainDefault();
     m_UseEnableDisable = robotContainer.getM_useEnableDisable();
 
-    configureSuppliers();
     configureGameControllersBindings();
     configureDefaultCommands();
   }
 
-  private static RobotSignals.LEDPatternSupplier colorWheel;
   /**
-   * Configure SUppliers
+   * Configure Suppliers
    */
-  private static void configureSuppliers() {
-    colorWheel = // produce a LED color pattern based on the timer current seconds of the minute
+  
+  // produce a LED color pattern based on the timer current seconds of the minute
+  private static RobotSignals.LEDPatternSupplier colorWheel =
       () ->
         LEDPattern.solid(
             Color.fromHSV(
@@ -68,7 +67,6 @@ public abstract class CommandsTriggers {
                     * 3 /* scale seconds to 180 hues per color wheel */,
                 200,
                 200));
-  }
 
   /**
    * Get disjointed sequence test from its creator for use by Robot - passing the reference up
@@ -149,7 +147,7 @@ public abstract class CommandsTriggers {
       m_operatorController
           .x()
           .debounce(xButtonDebounceTime.in(Seconds), DebounceType.kBoth)
-          .onTrue(m_robotSignals.m_top.setSignal(colorWheel.get()));
+          .onTrue(m_robotSignals.m_top.setSignal(colorWheel));
     });
 
     /**
