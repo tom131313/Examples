@@ -1,23 +1,26 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
-import static edu.wpi.first.wpilibj2.command.Commands.print;
+import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.AchieveHueGoal;
 import frc.robot.subsystems.GroupDisjointTest;
 import frc.robot.subsystems.HistoryFSM;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.RobotSignals;
 import frc.robot.subsystems.RobotSignals.LEDPatternSupplier;
+
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import java.util.Optional;
 
@@ -76,6 +79,7 @@ public abstract class CommandsTriggers {
    * 
    * @return Command to be scheduled to run disjointed sequence test
    */
+  @SuppressWarnings("resource")
   public static Command getDisjointedSequenceTest() {
     if(m_groupDisjointTest.isPresent())
     {
@@ -83,7 +87,7 @@ public abstract class CommandsTriggers {
     }
     else
     {
-      return print("Group Disjointed Test not selected");
+      return runOnce(()-> new Alert("Group Disjointed Test not selected", AlertType.kWarning).set(true));
     }
   }
 
@@ -94,6 +98,7 @@ public abstract class CommandsTriggers {
    *
    * @return LED pattern signal for autonomous mode
    */
+  @SuppressWarnings("resource")
   public static Command setAutonomousSignal() {
     if(m_UseAutonomousSignal.isPresent()) {
       LEDPattern autoTopSignal =
@@ -116,8 +121,7 @@ public abstract class CommandsTriggers {
           .withName("AutoSignal");
     }
     else {
-      return
-        print("Autonomous Signal not selected");
+      return runOnce(()-> new Alert("Autonomous Signal not selected", AlertType.kWarning).set(true));
     }
   }
 
