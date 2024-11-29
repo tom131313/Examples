@@ -232,10 +232,7 @@ public class Robot extends TimedRobot {
     // Commands running from another mode haven't been cancelled directly but may be interrupted by
     // this command.
     m_autonomousSignal = CommandsTriggers.setAutonomousSignal();
-
-    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
-      m_autonomousSignal.schedule();
-    }
+    m_autonomousSignal.schedule();
   }
 
   @Override
@@ -243,22 +240,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
-      m_autonomousSignal.cancel();
-    }
+    m_autonomousSignal.cancel(); // in case it's still running
   }
 
   @Override
   public void teleopInit() {
     // Commands running from another mode haven't been cancelled directly except the one below.
-
-    if (m_autonomousSignal != null) { // example can't be null but retain for typical usage
-      m_autonomousSignal.cancel();
-    }
-
-    if (m_robotContainer.getM_groupDisjointTest().isPresent()) { // usually nicer than checking null
-      CommandsTriggers.getDisjointedSequenceTest().schedule();
-    }
+    m_autonomousSignal.cancel(); // in case it's still running
+    CommandsTriggers.getDisjointedSequenceTest().schedule();
   }
 
   @Override

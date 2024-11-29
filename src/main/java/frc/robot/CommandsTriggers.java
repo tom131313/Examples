@@ -22,17 +22,16 @@ import frc.robot.subsystems.RobotSignals.LEDPatternSupplier;
 import java.util.Optional;
 
 public abstract class CommandsTriggers {
-  private static CommandXboxController              m_operatorController;
-  private static RobotSignals                       m_robotSignals; // container and creator of all the LEDView subsystems
-  private static Optional<AchieveHueGoal>           m_achieveHueGoal;
-  private static Optional<GroupDisjointTest>        m_groupDisjointTest;
-  private static Optional<HistoryFSM>               m_historyFSM;
-  private static Optional<Intake>                   m_intake;
-  private static Optional<Boolean>                  m_UseAutonomousSignal;
-  private static Optional<Boolean>                  m_UseColorWheel;
-  private static Optional<Boolean>                  m_UseMainDefault;
-  private static Optional<Boolean>                  m_UseEnableDisable;
-
+  private static CommandXboxController       m_operatorController;
+  private static RobotSignals                m_robotSignals; // container and creator of all the LEDView subsystems
+  private static Optional<AchieveHueGoal>    m_achieveHueGoal;
+  private static Optional<GroupDisjointTest> m_groupDisjointTest;
+  private static Optional<HistoryFSM>        m_historyFSM;
+  private static Optional<Intake>            m_intake;
+  private static Optional<Boolean>           m_UseAutonomousSignal;
+  private static Optional<Boolean>           m_UseColorWheel;
+  private static Optional<Boolean>           m_UseMainDefault;
+  private static Optional<Boolean>           m_UseEnableDisable;
   
   private CommandsTriggers()
   {}
@@ -67,6 +66,10 @@ public abstract class CommandsTriggers {
                     * 3 /* scale seconds to 180 hues per color wheel */,
                 200,
                 200));
+
+  /**
+   * Configure Commands
+   */
 
   /**
    * Get disjointed sequence test from its creator for use by Robot - passing the reference up
@@ -153,7 +156,7 @@ public abstract class CommandsTriggers {
     /**
       * Goal setting demo control
       *
-      * The PID controller is not running initially until a setpoint is set by moving the operator
+      * <p>The PID controller is not running initially until a setpoint is set by moving the operator
       * right trigger axis past the threshold at which time a command runs to achieve that goal.
       */
     m_achieveHueGoal.ifPresent((x)->

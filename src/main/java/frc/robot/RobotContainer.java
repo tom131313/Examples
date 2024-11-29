@@ -62,7 +62,7 @@ public class RobotContainer {
     return m_achieveHueGoal;
   }
 
-  private Optional<GroupDisjointTest> m_groupDisjointTest = useGroupDisjointTest ? Optional.of(new GroupDisjointTest()) : Optional.empty(); // container and creator of all
+  private Optional<GroupDisjointTest> m_groupDisjointTest = useGroupDisjointTest ? Optional.of(new GroupDisjointTest()) : Optional.empty(); // container and creator of all tests
   public Optional<GroupDisjointTest> getM_groupDisjointTest() {
     return m_groupDisjointTest;
   }
