@@ -240,13 +240,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    m_autonomousSignal.cancel(); // in case it's still running
+    m_autonomousSignal.cancel(); // cancel in case still running
   }
 
   @Override
   public void teleopInit() {
     // Commands running from another mode haven't been cancelled directly except the one below.
-    m_autonomousSignal.cancel(); // in case it's still running
+    if(m_autonomousSignal == null) { // check null in case not initialized in auto mode
+      m_autonomousSignal.cancel(); // cancel in case still running
+    }
     CommandsTriggers.getDisjointedSequenceTest().schedule();
   }
 
