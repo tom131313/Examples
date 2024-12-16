@@ -101,11 +101,11 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
     // If the FSM doesn't run disabled, then start it in auto or periodic init or as a command anywhere.
 
     waitSeconds(10.) // test stopFSM function and then restart
-      .andThen(this::stopFSM)
-      .andThen(waitSeconds(4.))
-      .andThen(this::startFSM)
-        .ignoringDisable(true)
-        .schedule();
+    .andThen(this::stopFSM)
+    .andThen(waitSeconds(4.))
+    .andThen(this::startFSM)
+      .ignoringDisable(true)
+      .schedule();
   }
 
   /**
@@ -140,76 +140,48 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
     // Each transition is the current state to exit AND a timed event period that together
     // trigger a command to attain the next state.
     // Checking for the FSM being active prevents anything new from starting. (Steady-state command
-    // that is already running must honor the stop when requested.)
+    // that is already running should honor the stop when requested.)
 
-    /*Light1Period0ToLight2*/ new Trigger(() -> m_currentState == State.Light1)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 0)
-      .and(() -> m_FSMactive)
+    /*Light1Period0ToLight2*/ triggerState(State.Light1, 0)
       .onTrue(transition(State.Light2, activateLightExit(State.Light1), activateLightEntry(State.Light2), activateLightSteadystate(State.Light2)));
-    
-    /*Light2Period1ToLight3*/ new Trigger(() -> m_currentState == State.Light2)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 1)
-      .and(() -> m_FSMactive)
+
+    /*Light2Period1ToLight3*/ triggerState(State.Light2, 1)
       .onTrue(transition(State.Light3, activateLightExit(State.Light2), activateLightEntry(State.Light3), activateLightSteadystate(State.Light3)));
     
-    /*Light3Period2ToLight4*/ new Trigger(() -> m_currentState == State.Light3)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 2)
-      .and(() -> m_FSMactive)
+    /*Light3Period2ToLight4*/ triggerState(State.Light3, 2)
       .onTrue(transition(State.Light4, activateLightExit(State.Light3), activateLightEntry(State.Light4), activateLightSteadystate(State.Light4)));
     
-    /*Light4Period3ToLight5*/ new Trigger(() -> m_currentState == State.Light4)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 3)
-      .and(() -> m_FSMactive)
+    /*Light4Period3ToLight5*/ triggerState(State.Light4, 3)
       .onTrue(transition(State.Light5, activateLightExit(State.Light4), activateLightEntry(State.Light5), activateLightSteadystate(State.Light5)));
     
-    /*Light5Period4ToLight6*/ new Trigger(() -> m_currentState == State.Light5)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 4)
-      .and(() -> m_FSMactive)
+    /*Light5Period4ToLight6*/ triggerState(State.Light5, 4)
       .onTrue(transition(State.Light6, activateLightExit(State.Light5), activateLightEntry(State.Light6), activateLightSteadystate(State.Light6)));
     
-    /*Light6Period5ToLight7*/ new Trigger(() -> m_currentState == State.Light6)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 5)
-      .and(() -> m_FSMactive)
+    /*Light6Period5ToLight7*/ triggerState(State.Light6, 5)
       .onTrue(transition(State.Light7, activateLightExit(State.Light6), activateLightEntry(State.Light7), activateLightSteadystate(State.Light7)));
     
-    /*Light7Period6ToLight8*/ new Trigger(() -> m_currentState == State.Light7)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 6)
-      .and(() -> m_FSMactive)
+    /*Light7Period6ToLight8*/ triggerState(State.Light7, 6)
       .onTrue(transition(State.Light8, activateLightExit(State.Light7), activateLightEntry(State.Light8), activateLightSteadystate(State.Light8)));
     
-    /*Light8Period7ToLight7*/ new Trigger(() -> m_currentState == State.Light8)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 7)
-      .and(() -> m_FSMactive)
+    /*Light8Period7ToLight7*/ triggerState(State.Light8, 7)
       .onTrue(transition(State.Light7, activateLightExit(State.Light8), activateLightEntry(State.Light7), activateLightSteadystate(State.Light7)));
     
-    /*Light7Period8ToLight6*/ new Trigger(() -> m_currentState == State.Light7)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 8)
-      .and(() -> m_FSMactive)
+    /*Light7Period8ToLight6*/ triggerState(State.Light7, 8)
       .onTrue(transition(State.Light6, activateLightExit(State.Light7), activateLightEntry(State.Light6), activateLightSteadystate(State.Light6)));
     
-    /*Light6Period9ToLight5*/ new Trigger(() -> m_currentState == State.Light6)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 9)
-      .and(() -> m_FSMactive)
+    /*Light6Period9ToLight5*/ triggerState(State.Light6, 9)
       .onTrue(transition(State.Light5, activateLightExit(State.Light6), activateLightEntry(State.Light5), activateLightSteadystate(State.Light5)));
     
-    /*Light5Period10ToLight4*/ new Trigger(() -> m_currentState == State.Light5)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 10)
-      .and(() -> m_FSMactive)
+    /*Light5Period10ToLight4*/ triggerState(State.Light5, 10)
       .onTrue(transition(State.Light4, activateLightExit(State.Light5), activateLightEntry(State.Light4), activateLightSteadystate(State.Light4)));
     
-    /*Light4Period11ToLight3*/ new Trigger(() -> m_currentState == State.Light4)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 11)
-      .and(() -> m_FSMactive)
+    /*Light4Period11ToLight3*/ triggerState(State.Light4, 11)
       .onTrue(transition(State.Light3, activateLightExit(State.Light4), activateLightEntry(State.Light3), activateLightSteadystate(State.Light3)));
     
-    /*Light3Period12ToLight2*/ new Trigger(() -> m_currentState == State.Light3)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 12)
-      .and(() -> m_FSMactive)
+    /*Light3Period12ToLight2*/ triggerState(State.Light3, 12)
       .onTrue(transition(State.Light2, activateLightExit(State.Light3), activateLightEntry(State.Light2), activateLightSteadystate(State.Light2)));
     
-    /*Light2Period13ToLight1*/ new Trigger(() -> m_currentState == State.Light2)
-      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == 13)
-      .and(() -> m_FSMactive)
+    /*Light2Period13ToLight1*/ triggerState(State.Light2, 13)
       .onTrue(transition(State.Light1, activateLightExit(State.Light2), activateLightEntry(State.Light1), activateLightSteadystate(State.Light1)));
     
     /*Any and all States off when FSM stopped*/ new Trigger(() -> !m_FSMactive)
@@ -322,10 +294,10 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
    * Factory for the Entry Commands
    * All the Commands are the same except for the State identifier
    *  
-   * @param state the associated state
+   * @param nextState the associated state
    * @return the command to run that defines the state entry
    */
-  private final Command activateLightEntry(State state)
+  private final Command activateLightEntry(State nextState)
   {
     return
       runOnce(
@@ -334,7 +306,7 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
           {
             SmartDashboard.putString("FSM entry action "+this, m_currentState.name());
           })
-          .withName(this.getClass().getSimpleName() + " " + m_color + " entry " + state)
+          .withName(this.getClass().getSimpleName() + " " + m_color + " entry " + nextState)
           .ignoringDisable(true);
   }
 
@@ -342,10 +314,10 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
    * Factory for the Steady-State Commands - turn on the LEDs
    * All the Commands are the same except for the State identifier
    * 
-   * @param state the associated state
+   * @param nextState the associated state
    * @return the command to run that defines the steady-state to wait for the next transition
    */
-  private final Command activateLightSteadystate(State state)
+  private final Command activateLightSteadystate(State nextState)
   {
     return
       new FunctionalCommand(
@@ -353,9 +325,9 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
 
         () -> // steady-state action
           {
-            LEDPattern currentStateSignal = oneLEDSmeared(state.ordinal(), m_color, Color.kBlack);
+            LEDPattern currentStateSignal = oneLEDSmeared(nextState.ordinal(), m_color, Color.kBlack);
             m_robotSignals.setSignal(currentStateSignal).schedule();
-            SmartDashboard.putString("FSM steady-state action "+this, state.name());
+            SmartDashboard.putString("FSM steady-state action "+this, nextState.name());
           },
 
         (interrupt)->{},
@@ -363,7 +335,7 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
         () -> m_FSMactive ? false : true // isFinished honors the stop
 
       )
-      .withName(this.getClass().getSimpleName() + " " + m_color + " steady-state " + state)
+      .withName(this.getClass().getSimpleName() + " " + m_color + " steady-state " + nextState)
       .ignoringDisable(true);
   }
 
@@ -371,19 +343,19 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
    * Factory for the Exit Commands
    * All the Commands are the same except for the State identifier
    * 
-   * @param state the associated state
+   * @param currentState the associated state
    * @return the command to run that defines the state exit
    */
-  private final Command activateLightExit(State state)
+  private final Command activateLightExit(State currentState)
   {
     return
       runOnce(
         // exit action
         () ->
           {
-            SmartDashboard.putString("FSM exit action "+this, state.name());
+            SmartDashboard.putString("FSM exit action "+this, currentState.name());
           })
-          .withName(this.getClass().getSimpleName() + " " + m_color + " exit " + state)
+          .withName(this.getClass().getSimpleName() + " " + m_color + " exit " + currentState)
           .ignoringDisable(true);
   }
 
@@ -397,6 +369,18 @@ public class MooreLikeFSMMultiCommand extends SubsystemBase {
       runOnce(() -> m_robotSignals.setSignal(off).schedule())
         .ignoringDisable(true)
         .withName(this.getClass().getSimpleName() + " " + m_color + " FSM off");
+  }
+
+  /**
+   * Trigger State template
+   * @param currentState - the state that will be exited
+   * @param triggerTimePeriod - the time period to trigger the rtansition
+   * @return trigger to exit the given state at the right time if the FSM is active
+   */
+  private Trigger triggerState(State currentState, int triggerTimePeriod) {
+    return new Trigger(() -> m_currentState == currentState)
+      .and(() -> (int) (Timer.getFPGATimestamp()*m_periodFactor % m_numberPeriods) == triggerTimePeriod)
+      .and(() -> m_FSMactive);
   }
 
   /**
